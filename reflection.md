@@ -72,6 +72,10 @@ I checked those lines of code, understood that what the Ai said, and found it to
 ## 5. Looking ahead: your developer habits
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
+  - Running pytest after every fix. It made it obvious whether the change actually solved the problem or just made it look like it did. I want to keep that habit instead of only doing manual testing.
+
 - What is one thing you would do differently next time you work with AI on a coding task?
+  - I would ask AI to explain the bug before asking it to fix it. That way I understand what is going on and can judge whether the fix actually makes sense, instead of just applying it and hoping it works.
+
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+  - I used to assume AI code was probably fine unless something obviously broke. Now I know it can have subtle bugs that look reasonable on the surface but are quietly wrong, and that it is on me to actually read and question what it gives me.
