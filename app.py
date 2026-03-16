@@ -44,10 +44,13 @@ if "history" not in st.session_state:
 
 st.subheader("Make a guess")
 
-st.info(
-    f"Guess a number between 1 and 100. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
-)
+attempts_left = attempt_limit - st.session_state.attempts
+if attempts_left <= 1:
+    st.error(f"🔥 Last chance! Guess a number between {low} and {high}. Attempts left: {attempts_left}")
+elif attempts_left <= 2:
+    st.warning(f"⚠️ Getting close! Guess a number between {low} and {high}. Attempts left: {attempts_left}")
+else:
+    st.info(f"🎯 Guess a number between {low} and {high}. Attempts left: {attempts_left}")
 
 with st.expander("Developer Debug Info"):
     st.write("Secret:", st.session_state.secret)
@@ -68,7 +71,10 @@ with col2:
     new_game = st.button("New Game 🔁")
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
-    
+
+# FIX (user + Claude): "New Game" wasn't resetting status/history, so st.stop()
+# fired after st.rerun() and blocked the new game UI. Added status = "playing"
+# and history = [] to the handler so the play loop runs cleanly on reload.
 if new_game:
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(1, 100)
@@ -82,6 +88,24 @@ if st.session_state.status != "playing":
         st.success("You already won. Start a new game to play again.")
     else:
         st.error("Game over. Start a new game to try again.")
+
+    if st.session_state.history:
+        st.subheader("📋 Game Summary")
+        rows = []
+        for i, g in enumerate(st.session_state.history):
+            if not isinstance(g, int):
+                rows.append({"#": i + 1, "Guess": g, "Result": "Invalid"})
+                continue
+            outcome, _ = check_guess(g, st.session_state.secret)
+            if outcome == "Win":
+                result = "✅ Correct!"
+            elif outcome == "Too High":
+                result = "🔺 Too High"
+            else:
+                result = "🔻 Too Low"
+            rows.append({"#": i + 1, "Guess": g, "Result": result})
+        st.table(rows)
+
     st.stop()
 
 if submit:
@@ -91,15 +115,23 @@ if submit:
 
     if not ok:
         st.session_state.history.append(raw_guess)
-        st.error(err)
+        st.error(f"❌ {err}")
     else:
         st.session_state.history.append(guess_int)
-        
-#FIX: Removed string cast of secret on even attempts fixing new game attempts, always pass int using Claude
+
+        #FIX: Removed string cast of secret on even attempts fixing new game attempts, always pass int using Claude
         outcome, message = check_guess(guess_int, st.session_state.secret)
 
         if show_hint:
-            st.warning(message)
+            diff = abs(guess_int - st.session_state.secret)
+            if outcome == "Win":
+                st.success(f"🎉 {message}")
+            elif diff <= 5:
+                st.error(f"🔥 So close! {message}")
+            elif diff <= 15:
+                st.warning(f"🌡️ Warm! {message}")
+            else:
+                st.info(f"🧊 Cold! {message}")
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,
@@ -111,17 +143,35 @@ if submit:
             st.balloons()
             st.session_state.status = "won"
             st.success(
-                f"You won! The secret was {st.session_state.secret}. "
+                f"🏆 You won! The secret was {st.session_state.secret}. "
                 f"Final score: {st.session_state.score}"
             )
         else:
             if st.session_state.attempts >= attempt_limit:
                 st.session_state.status = "lost"
                 st.error(
-                    f"Out of attempts! "
+                    f"💀 Out of attempts! "
                     f"The secret was {st.session_state.secret}. "
                     f"Score: {st.session_state.score}"
                 )
+
+    # Live guess history during play
+    if st.session_state.history:
+        with st.expander("📜 Guess History", expanded=True):
+            rows = []
+            for i, g in enumerate(st.session_state.history):
+                if not isinstance(g, int):
+                    rows.append({"#": i + 1, "Guess": g, "Result": "Invalid"})
+                    continue
+                o, _ = check_guess(g, st.session_state.secret)
+                if o == "Win":
+                    result = "✅ Correct!"
+                elif o == "Too High":
+                    result = "🔺 Too High"
+                else:
+                    result = "🔻 Too Low"
+                rows.append({"#": i + 1, "Guess": g, "Result": result})
+            st.table(rows)
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")

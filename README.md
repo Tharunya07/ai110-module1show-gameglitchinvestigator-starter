@@ -38,6 +38,7 @@ It wrote the code, ran away, and now the game is unplayable.
   - Removed the string cast on even attempts so the secret is always compared as a number.
   - Added status = "playing" and history = [] to the New Game handler so the game properly resets without needing a page refresh.
   - [] Challenge 1: Pytest screenshot: ![pytest screenshot result](image-1.png)
+  - [] Challenge 4: Enhanced Game UI- New player experience ![New player exp](image-2.png)
 
 ## 📸 Demo
 
@@ -45,4 +46,4 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+- [ ] Challenge 4: Enhanced Game UI- New player experience ![New player exp](image-2.png)
