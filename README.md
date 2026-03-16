@@ -25,13 +25,23 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [] Describe the game's purpose.
+  A number guessing game where you try to guess a secret number within a limited number of attempts. The game gives you hints after each guess to guide you higher or lower, and tracks your score based on how quickly you find the answer.
+
+- [] Detail which bugs you found.
+  - The hints were backwards. Guessing too high told you to go higher, and guessing too low told you to go lower.
+  - On even-numbered attempts, the secret number was secretly converted to a string, so comparisons like 9 vs 78 broke because "9" is greater than "78" as text.
+  - Clicking "New Game" after winning or losing would not actually start a new game. The page looked frozen until you manually refreshed the browser.
+
+- [] Explain what fixes you applied.
+  - Swapped the hint messages in check_guess so "Too High" says go lower and "Too Low" says go higher.
+  - Removed the string cast on even attempts so the secret is always compared as a number.
+  - Added status = "playing" and history = [] to the New Game handler so the game properly resets without needing a page refresh.
+  - [] Challenge 1: Pytest screenshot: ![pytest screenshot result](image-1.png)
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- [ ] ![Winning Image](image.png)
 
 ## 🚀 Stretch Features
 

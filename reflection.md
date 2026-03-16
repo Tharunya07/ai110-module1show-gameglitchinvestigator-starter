@@ -59,8 +59,13 @@ I checked those lines of code, understood that what the Ai said, and found it to
 ## 4. What did you learn about Streamlit and state?
 
 - In your own words, explain why the secret number kept changing in the original app.
+  - Every time you clicked Submit, Streamlit re-ran the whole script top to bottom. Because the secret number was generated without checking if one already existed, it picked a new random number on every rerun. There was no memory of the previous value between clicks.
+
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+  - Think of it like a webpage that fully reloads every time you interact with it. All your variables disappear. Session state is a small place where you can save values that survive those reloads. Without it, nothing sticks between clicks.
+
 - What change did you make that finally gave the game a stable secret number?
+  - The fix was wrapping the secret generation inside a check so it only runs if there is no secret already saved in session state. AI suggested this early on and it was correct. I did push back on one suggestion though, where AI told me to move the test file to the root directory to fix an import error. That would have broken the project structure, so I rejected it and kept the tests in the tests folder where they belonged.
 
 ---
 
